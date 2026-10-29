@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="parkora_yellow">#FFD700</color>
+    <color name="parkora_dark_yellow">#E0A800</color>
+    <color name="parkora_navy">#1B1F2A</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>

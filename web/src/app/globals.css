@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+/*
+ * PARKORA THEME
+ * These colours are copied from the Android app (ui/theme/Color.kt), which were
+ * picked from the synopsis screenshots. Tailwind turns each --color-x into
+ * classes like bg-yellow, text-navy, border-card-border.
+ */
+@theme {
+  --color-yellow: #fed700;          /* header, + button, badges */
+  --color-yellow-light: #ffe029;    /* soft circles on headers */
+  --color-btn-top: #ffd500;         /* button gradient top */
+  --color-btn-bottom: #ffc205;      /* button gradient bottom */
+  --color-cream: #fffff7;           /* cards, fields, bottom bar */
+  --color-card-border: #f5efc8;
+  --color-field-border: #f7edb0;
+  --color-booking-border: #f2cf8a;
+  --color-chip: #eeedf0;
+  --color-navy: #1b1f2a;            /* main text */
+  --color-muted: #6e6e73;           /* secondary text */
+  --color-light-gray: #c7c8ca;
+  --color-verified: #1fa055;
+  --color-pending: #ffa822;
+  --color-approved: #2e9e5b;
+  --color-rejected: #dc2626;
+  --color-star: #f9c802;
+
+  --font-sans: "Work Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --animate-fade-up: fade-up 0.45s ease-out both;
+  --animate-pop: pop 0.25s ease-out both;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes pop {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Work Sans variable font (same file as android/app/src/main/res/font/work_sans.ttf) */
+@font-face {
+  font-family: "Work Sans";
+  src: url("/fonts/WorkSans.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+html {
+  color-scheme: light; /* Parkora has only a light yellow & white design, like the app */
+}
+
+body {
+  background: #ffffff;
+  color: var(--color-navy);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Visible keyboard focus for accessibility.
+   In the base layer so a utility like `outline-none` (used on inputs whose box already
+   shows a yellow focus ring) can switch it off. */
+@layer base {
+  :focus-visible {
+    outline: 3px solid var(--color-navy);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+}
+
+/* The yellow gradient used on all main buttons */
+.btn-yellow {
+  background-image: linear-gradient(to bottom, var(--color-btn-top), var(--color-btn-bottom));
+}
+
+/* Decorative lighter circles on yellow headers (like the app) */
+.yellow-circles {
+  background-color: var(--color-yellow);
+  background-image:
+    radial-gradient(circle at 12% -20%, var(--color-yellow-light) 0 34%, transparent 34.2%),
+    radial-gradient(circle at 92% 130%, rgb(255 224 41 / 0.55) 0 26%, transparent 26.2%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

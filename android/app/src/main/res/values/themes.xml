@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        This XML theme is only used by the Activity window and by the classic
+        date/time picker dialogs. The screens themselves are styled in Kotlin
+        (see ui/theme/Theme.kt).
+    -->
+    <style name="Theme.Parkora" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:colorAccent">@color/parkora_dark_yellow</item>
+        <item name="android:windowBackground">@color/white</item>
+    </style>
+</resources>

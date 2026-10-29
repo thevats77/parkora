@@ -1,0 +1,118 @@
+rules_version = '2';
+
+// ===========================================================================
+// PARKORA – Firestore Security Rules
+// ---------------------------------------------------------------------------
+// These rules run on Google's servers for EVERY read and write, from the Android
+// app and from the website. Even a modified app cannot break them.
+// Deploy with:   npx firebase-tools deploy --only firestore:rules
+// The admin email must match FirebaseConfig.ADMIN_EMAIL (Android) and
+// ADMIN_EMAIL in web/src/lib/firebase.ts.
+// ===========================================================================
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- helper functions ----------
+    function signedIn() { return request.auth != null; }
+
+    function isAdmin() {
+      return signedIn()
+        && request.auth.token.email == 'vatsalsharma849@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+
+    function myProfile() { return get(/databases/$(database)/documents/users/$(request.auth.uid)).data; }
+
+    // Signed in and not blocked by the admin
+    function activeUser() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && myProfile().get('isBlocked', false) == false;
+    }
+
+    // True when the update changes ONLY the listed fields
+    function onlyChanges(fields) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
+    }
+
+    // ---------- users ----------
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+
+      // First Google sign-in creates the profile. Nobody can make themselves admin:
+      // the role must be 'admin' only for the admin email, 'user' for everyone else.
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.role == (isAdmin() ? 'admin' : 'user')
+        && request.resource.data.isBlocked == false;
+
+      // Users edit their own profile fields; the admin can block/unblock.
+      allow update: if (signedIn() && request.auth.uid == uid
+                         && onlyChanges(['name', 'phone', 'location', 'profileImagePath']))
+                    || (isAdmin() && onlyChanges(['isBlocked']));
+
+      allow delete: if isAdmin();
+    }
+
+    // ---------- parking_spots ----------
+    match /parking_spots/{spotId} {
+      // Listings are public, so website visitors can browse before signing in.
+      allow read: if true;
+
+      // New listings belong to the person creating them and start unverified.
+      allow create: if isAdmin()
+        || (activeUser() && request.resource.data.ownerId == request.auth.uid
+            && request.resource.data.isVerified == false);
+
+      allow update: if isAdmin()
+        // the owner can pause / resume bookings
+        || (activeUser() && resource.data.ownerId == request.auth.uid && onlyChanges(['isAvailable']))
+        // any signed-in user may add/remove a booked time slot (done inside the booking transaction)
+        || (signedIn() && onlyChanges(['bookedSlots']));
+
+      allow delete: if isAdmin() || (signedIn() && resource.data.ownerId == request.auth.uid);
+    }
+
+    // ---------- bookings ----------
+    match /bookings/{bookingId} {
+      // Only the person who booked, the spot owner and the admin can see a booking.
+      allow read: if isAdmin()
+        || (signedIn() && (resource.data.userId == request.auth.uid || resource.data.ownerId == request.auth.uid));
+
+      // New bookings are always PENDING, made by yourself, never for your own spot.
+      allow create: if activeUser()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.ownerId != request.auth.uid
+        && request.resource.data.status == 'PENDING';
+
+      // Only the status may change, and only in these ways:
+      allow update: if onlyChanges(['status']) && (
+           isAdmin()
+        // the renter cancels an active booking
+        || (resource.data.userId == request.auth.uid
+            && resource.data.status in ['PENDING', 'APPROVED']
+            && request.resource.data.status == 'CANCELLED')
+        // the owner answers a request
+        || (resource.data.ownerId == request.auth.uid
+            && resource.data.status == 'PENDING'
+            && request.resource.data.status in ['APPROVED', 'REJECTED'])
+        // after check-out: Approved -> Completed, Pending -> Expired
+        || ((resource.data.userId == request.auth.uid || resource.data.ownerId == request.auth.uid)
+            && resource.data.checkOutMillis < request.time.toMillis()
+            && ((resource.data.status == 'APPROVED' && request.resource.data.status == 'COMPLETED')
+                || (resource.data.status == 'PENDING' && request.resource.data.status == 'EXPIRED')))
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    // ---------- notifications ----------
+    match /notifications/{notificationId} {
+      allow read: if signedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      // Any signed-in user can send an in-app message (e.g. "New booking request" to an owner).
+      allow create: if signedIn() && request.resource.data.isRead == false;
+      // You can only mark your own notifications as read.
+      allow update: if signedIn() && resource.data.userId == request.auth.uid && onlyChanges(['isRead']);
+      allow delete: if isAdmin();
+    }
+  }
+}

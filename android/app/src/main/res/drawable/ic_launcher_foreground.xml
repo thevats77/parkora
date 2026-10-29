@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- App icon: a dark rounded square with a yellow "P" (parking sign) on the yellow background. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- dark rounded square -->
+    <path
+        android:fillColor="#1B1F2A"
+        android:pathData="M40,34 L68,34 Q74,34 74,40 L74,68 Q74,74 68,74 L40,74 Q34,74 34,68 L34,40 Q34,34 40,34 Z" />
+    <!-- letter P: drawn as ONE shape (outline + hole) so no thin seam appears -->
+    <path
+        android:fillColor="#FFD700"
+        android:fillType="evenOdd"
+        android:pathData="M45,41 L56,41 Q65,41 65,49.5 Q65,58 56,58 L51,58 L51,67 L45,67 Z M51,46.5 L56,46.5 Q59,46.5 59,49.5 Q59,52.5 56,52.5 L51,52.5 Z" />
+</vector>

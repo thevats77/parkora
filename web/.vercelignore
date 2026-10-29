@@ -1,0 +1,10 @@
+# Files NOT uploaded to Vercel (Vercel installs packages and builds the site itself)
+node_modules
+.next
+out
+.npm-cache
+.claude
+.next-dev.log
+*.tsbuildinfo
+.env*
+.vercel

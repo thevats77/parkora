@@ -1,0 +1,4 @@
+# R8 keep rules (only used for release builds).
+# Gson reads/writes our data classes by their field names using reflection,
+# so R8 must not rename or remove the fields of the classes in the data package.
+-keep class com.example.parkora.data.** { *; }
