@@ -1,6 +1,6 @@
 [versions]
 agp = "9.4.1"
-kotlin = "2.2.10"
+kotlin = "2.4.21"            # Kotlin 2.4 (needed by Compose Multiplatform 1.12)
 coreKtx = "1.10.1"
 lifecycleRuntimeKtx = "2.6.1"
 activityCompose = "1.8.0"
@@ -12,7 +12,17 @@ firebaseBom = "34.19.0"        # Firebase: Google login (Auth) + live cloud data
 credentials = "1.5.0"         # Android Credential Manager – shows the "Sign in with Google" sheet
 googleId = "1.1.1"            # Google ID token for Credential Manager
 coroutinesPlayServices = "1.10.2" # lets us write  someFirebaseTask.await()
-coil = "3.3.0"                # loading parking photos picked from the gallery
+coil = "3.6.3"                # loading parking photos picked from the gallery
+# ---- Compose Multiplatform (one UI for Android + iPhone, see shared/) ----
+composeMultiplatform = "1.12.2"
+cmpMaterial3 = "1.9.0"
+cmpIcons = "1.7.3"
+cmpNavigation = "2.10.0"
+gitliveFirebase = "2.7.0"     # Firebase Auth + Firestore from shared Kotlin code (Android + iOS)
+filekit = "0.17.0"            # photo / document picker on Android + iOS
+kotlinxDatetime = "0.8.0"
+coroutines = "1.11.0"
+ktor = "3.6.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -36,6 +46,26 @@ kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "ko
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-network = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
 
+cmp-runtime = { group = "org.jetbrains.compose.runtime", name = "runtime", version.ref = "composeMultiplatform" }
+cmp-foundation = { group = "org.jetbrains.compose.foundation", name = "foundation", version.ref = "composeMultiplatform" }
+cmp-ui = { group = "org.jetbrains.compose.ui", name = "ui", version.ref = "composeMultiplatform" }
+cmp-resources = { group = "org.jetbrains.compose.components", name = "components-resources", version.ref = "composeMultiplatform" }
+cmp-backhandler = { group = "org.jetbrains.compose.ui", name = "ui-backhandler", version.ref = "composeMultiplatform" }
+cmp-material3 = { group = "org.jetbrains.compose.material3", name = "material3", version.ref = "cmpMaterial3" }
+cmp-icons-extended = { group = "org.jetbrains.compose.material", name = "material-icons-extended", version.ref = "cmpIcons" }
+cmp-navigation = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "cmpNavigation" }
+gitlive-auth = { group = "dev.gitlive", name = "firebase-auth", version.ref = "gitliveFirebase" }
+gitlive-firestore = { group = "dev.gitlive", name = "firebase-firestore", version.ref = "gitliveFirebase" }
+filekit-dialogs = { group = "io.github.vinceglb", name = "filekit-dialogs-compose", version.ref = "filekit" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+coil-network-ktor = { group = "io.coil-kt.coil3", name = "coil-network-ktor3", version.ref = "coil" }
+ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
+android-kmp-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }

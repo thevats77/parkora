@@ -23,4 +23,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Parkora"
-include(":app")
+include(":app")      // the Android app (MainActivity)
+include(":shared")   // all screens + data code, shared by the Android and iPhone apps

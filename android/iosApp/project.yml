@@ -1,0 +1,62 @@
+# iPhone app project, described as text.
+# XcodeGen turns this file into iosApp.xcodeproj (done automatically on the Mac build
+# machine in .github/workflows/ios-testflight.yml – nobody needs to edit Xcode files by hand).
+name: iosApp
+options:
+  bundleIdPrefix: in.parkora
+  deploymentTarget:
+    iOS: "16.0"
+packages:
+  Firebase:
+    url: https://github.com/firebase/firebase-ios-sdk
+    from: 12.0.0
+  GoogleSignIn:
+    url: https://github.com/google/GoogleSignIn-iOS
+    from: 9.0.0
+targets:
+  iosApp:
+    type: application
+    platform: iOS
+    sources:
+      - iosApp
+    info:
+      path: iosApp/Info.plist
+      properties:
+        CFBundleDisplayName: Parkora
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UILaunchScreen:
+          UIColorName: LaunchYellow
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        ITSAppUsesNonExemptEncryption: false
+        NSPhotoLibraryUsageDescription: Parkora uses your photos for parking spot pictures and your profile picture.
+        # Google sign-in: iOS client id from Firebase (also in FirebaseConfig.kt)
+        GIDClientID: 902881672311-47dt5dbdfbcpuiq5v64o0aiudcokc4ak.apps.googleusercontent.com
+        CFBundleURLTypes:
+          - CFBundleURLSchemes:
+              - com.googleusercontent.apps.902881672311-47dt5dbdfbcpuiq5v64o0aiudcokc4ak
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: in.parkora.app
+        MARKETING_VERSION: "2.0.1"
+        CURRENT_PROJECT_VERSION: "1"
+        TARGETED_DEVICE_FAMILY: "1"
+        CODE_SIGN_STYLE: Automatic
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        # Shared.framework is built by Gradle from android/shared (Kotlin)
+        FRAMEWORK_SEARCH_PATHS: $(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)
+        OTHER_LDFLAGS: [$(inherited), -framework, Shared, -lsqlite3, -ObjC]
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+    preBuildScripts:
+      - name: Compile Kotlin (shared module)
+        basedOnDependencyAnalysis: false
+        script: |
+          cd "$SRCROOT/.."
+          ./gradlew :shared:embedAndSignAppleFrameworkForXcode
+    dependencies:
+      - package: Firebase
+        product: FirebaseAuth
+      - package: Firebase
+        product: FirebaseFirestore
+      - package: GoogleSignIn
+        product: GoogleSignIn

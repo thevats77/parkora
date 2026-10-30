@@ -58,34 +58,9 @@ android {
 }
 
 dependencies {
-    // Jetpack Compose (UI toolkit)
-    implementation(platform(libs.androidx.compose.bom))
+    // Every screen and all data code come from the shared module (also used by the iPhone app)
+    implementation(project(":shared"))
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.graphics)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-
-    // Navigation between screens
-    implementation(libs.androidx.navigation.compose)
-
-    // Firebase: Google sign-in + Cloud Firestore (live shared database, see ParkoraRepository.kt)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore)
-    implementation(libs.kotlinx.coroutines.play.services)
-
-    // "Sign in with Google" bottom sheet (Credential Manager)
-    implementation(libs.androidx.credentials)
-    implementation(libs.androidx.credentials.play.services)
-    implementation(libs.googleid)
-
-    // Showing photos: built-in demo pictures, uploaded photos and Google profile pictures (internet)
-    implementation(libs.coil.compose)
-    implementation(libs.coil.network)
-
-    debugImplementation(libs.androidx.compose.ui.tooling)
 }

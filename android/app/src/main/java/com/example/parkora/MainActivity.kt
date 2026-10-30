@@ -7,20 +7,19 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.parkora.data.ParkoraRepository
-import com.example.parkora.navigation.ParkoraNavGraph
-import com.example.parkora.ui.theme.ParkoraTheme
+import com.example.parkora.platform.Platform
 
 /*
- * MAIN ACTIVITY – the entry point of the app.
- * -------------------------------------------
+ * MAIN ACTIVITY – the entry point of the Android app.
+ * ---------------------------------------------------
  * An Activity is one "window" of an Android app. Parkora uses a single
- * Activity; every screen inside it is a @Composable function, and
- * ParkoraNavGraph switches between those screens.
+ * Activity; every screen is a @Composable function from the SHARED module
+ * (android/shared), which the iPhone app uses too.
  *
  * onCreate() runs when Android starts the app:
  *   1. Draw behind the status bar so the yellow header reaches the top edge.
- *   2. Load saved data (users, spots, bookings) from phone storage.
- *   3. setContent { } shows our Compose UI wrapped in the Parkora theme.
+ *   2. Give the shared code this Activity (needed for the Google sign-in sheet).
+ *   3. Connect to Firebase, then show ParkoraApp() (theme + all screens).
  */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,12 +31,11 @@ class MainActivity : ComponentActivity() {
             navigationBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
         )
 
-        ParkoraRepository.init(applicationContext)
+        Platform.attach(this)
+        ParkoraRepository.init()
 
         setContent {
-            ParkoraTheme {
-                ParkoraNavGraph()
-            }
+            ParkoraApp()
         }
     }
 }
